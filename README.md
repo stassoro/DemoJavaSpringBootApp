@@ -9,7 +9,9 @@ This project is built using Maven and the Spring Boot framework.
 ## Features
 - A basic REST API with two endpoints that implement CRUD functionality.
 - Data is returned as JSON.
-- In-memory database "H2" is used for customers and books (no external database required).
+- Support for 2 types of DB: 
+  - In-memory database "H2" (no external database required).
+  - Postgres database.
 
 ## Prerequisites
 
@@ -37,8 +39,10 @@ mvn clean install
 ```
 
 ### 3. change the config
-application.properties are found in the following path: `src\main\resources\application.properties`
-initial DB is created using this sql script `DemoJavaSpringBootApp\src\main\resources\data.sql`
+The config file is an application.properties in the following path: `src\main\resources\application.properties`
+There are 2 profiles:
+ 1. Dev - a development config that uses H2 database
+ 2. Prod - a production config that uses Postgres database, to use it update the following file `src\main\resources\application-prod.properties`
 
 ### 4. Run the application
 Run the Spring Boot application using the following command:
