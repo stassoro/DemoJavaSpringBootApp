@@ -3,6 +3,7 @@ package org.mainBusinessApp;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mainBusinessApp.model.Book;
+import org.mainBusinessApp.model.Customer;
 import org.mainBusinessApp.repository.BooksRepository;
 import org.mainBusinessApp.repository.CustomersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +34,11 @@ public class SpringBootRestApiApplicationTests {
 
     @Test
     void createNewBook() throws Exception {
-        String title = "testTitle";
         String author = "testAuthor";
-        Book book = new Book(title,author);
-
+        String title = "testTitle";
+        Book book = new Book();
+        book.setAuthor(author);
+        book.setTitle(title);
         mockMvc.perform(post("/books")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(book)))
@@ -46,12 +48,30 @@ public class SpringBootRestApiApplicationTests {
         Assert.isTrue(!bookResp.isEmpty(), "book wasn't created");
         Assert.isTrue(bookResp.get(0).getTitle().equals(title),"resulted title isn't correct");
     }
+    @Test
+    void createNewCustomer() throws Exception {
+        String name = "Tester Test";
+        String email = "tester.test@tests.com";
+        Customer customer = new Customer();
+        customer.setName(name);
+        customer.setEmail(email);
+        mockMvc.perform(post("/customers")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(customer)))
+                .andExpect(status().isOk());
+
+        List<Customer> customerResp = customersRepository.findByName(name);
+        Assert.isTrue(!customerResp.isEmpty(), "customer wasn't created");
+        Assert.isTrue(customerResp.get(0).getName().equals(name),"resulted email isn't correct");
+    }
 
     @Test
     void deleteBook() throws Exception {
         String title = "testTitleDelete";
         String author = "testAuthorDelete";
-        Book book = new Book(title,author);
+        Book book = new Book();
+        book.setAuthor(author);
+        book.setTitle(title);
 
         mockMvc.perform(post("/books")
                         .contentType("application/json")
