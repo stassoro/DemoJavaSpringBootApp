@@ -83,13 +83,24 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>3.4.0</version>
-                <configuration>
-                    <image>
-                        <name>main-business-app</name>
-                    </image>
-                </configuration>
             </plugin>
         </plugins>
     </build>
+
+
+
+    <profiles>
+        <profile>
+            <id>ci</id>
+            <activation>
+                <property>
+                    <name>env.APP_VERSION</name>
+                </property>
+            </activation>
+            <build>
+                <finalName>DemoJavaSpringBootApp-${env.APP_VERSION}</finalName>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
