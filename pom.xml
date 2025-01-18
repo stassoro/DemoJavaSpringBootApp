@@ -7,6 +7,7 @@
     <groupId>DemoJavaSpringBootApp</groupId>
     <artifactId>DemoJavaSpringBootApp</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -83,6 +84,16 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>3.4.0</version>
+                <configuration>
+                    <mainClass>org.mainBusinessApp.SpringBootRestApiApplication</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -98,9 +109,9 @@
                 </property>
             </activation>
             <build>
-                <finalName>DemoJavaSpringBootApp-${env.APP_VERSION}</finalName>
+                <finalName>DemoJavaSpringBootApp</finalName>
+<!--                <finalName>DemoJavaSpringBootApp-${env.APP_VERSION}</finalName>-->
             </build>
         </profile>
     </profiles>
-
 </project>

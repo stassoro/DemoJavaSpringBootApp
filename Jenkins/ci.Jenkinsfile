@@ -9,8 +9,8 @@ pipeline {
     timestamps()
   }
   environment {
-//    IMAGE = readMavenPom().getArtifactId()
-//    VERSION = readMavenPom().getVersion()
+    REGISTRY_NAME = "acr name"
+    VERSION = readMavenPom().getVersion()
   }
   stages {
     stage('Build') {
@@ -21,25 +21,12 @@ pipeline {
       }
       steps {
         withMaven() {
-          sh 'mvn clean compile'
+          sh 'mvn clean install'
         }
       }
       post {
         success {
           archiveArtifacts(artifacts: '**/target/*.jar', allowEmptyArchive: true)
-        }
-      }
-    }
-    stage('Test') {
-      when {
-        anyOf {
-          branch 'PR-*'
-          branch 'master'
-        }
-      }
-      steps {
-        script {
-
         }
       }
     }
