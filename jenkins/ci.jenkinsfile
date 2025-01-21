@@ -18,6 +18,9 @@ pipeline {
                 }
             }
             steps {
+                script {
+                    sh "ls -la"
+                }
                 withMaven(options: [artifactsPublisher(archiveFilesDisabled: true)]) {
                     sh 'mvn clean install'
                 }
