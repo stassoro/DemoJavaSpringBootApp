@@ -4,9 +4,11 @@ pipeline {
         string(name: 'VERSION', defaultValue: '1.0.0', description: 'pass the version in the following format x.x.x')
     }
     environment {
-        REGISTRY_NAME = "acr name" // todo
         IMAGE_NAME = "main-app"
         IMAGE_VERSION = "${VERSION}-${BUILD_NUMBER}"
+        REGISTRY_NAME = "stassoacrdev"
+        ACR_LOGIN_SERVER = "${REGISTRY_NAME}.azurecr.io"
+        REPOSITORY_NAME = "$IMAGE_NAME"
     }
     stages {
         stage('Build App') {
@@ -40,8 +42,13 @@ pipeline {
             }
             steps {
                 sh "docker tag ${IMAGE_NAME}:latest ${IMAGE_NAME}:${IMAGE_VERSION}"
-                sh "docker push ${IMAGE_NAME}:${IMAGE_VERSION}"
-                sh "docker push ${IMAGE_NAME}:latest"
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'azure-sp', usernameVariable: 'SERVICE_PRINCIPAL_ID', passwordVariable: 'SERVICE_PRINCIPAL_PASSWORD')]) {
+                        sh "docker login ${ACR_LOGIN_SERVER} -u $SERVICE_PRINCIPAL_ID -p $SERVICE_PRINCIPAL_PASSWORD"
+                        sh "docker push ${IMAGE_NAME}:${IMAGE_VERSION}"
+                        sh "docker push ${IMAGE_NAME}:latest"
+                    }
+                }
             }
         }
     }
