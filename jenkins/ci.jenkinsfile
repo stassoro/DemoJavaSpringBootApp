@@ -1,8 +1,5 @@
 pipeline {
     agent any
-    options {
-        skipDefaultCheckout()
-    }
     parameters {
         string(name: 'VERSION', defaultValue: '1.0.0', description: 'pass the version in the following format x.x.x')
     }
