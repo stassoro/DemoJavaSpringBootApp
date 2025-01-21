@@ -6,6 +6,7 @@ pipeline {
     environment {
         REGISTRY_NAME = "acr name" // todo
         IMAGE_NAME = "main-app"
+        APP_VERSION = "${VERSION}-${BUILD_NUMBER}"
     }
     stages {
         stage('Build App') {
@@ -15,17 +16,10 @@ pipeline {
                 }
             }
             steps {
-                script {
-                    sh "ls -la"
-                }
                 withMaven(options: [artifactsPublisher(archiveFilesDisabled: true)]) {
                     sh 'mvn clean install'
                 }
-            }
-            post {
-                success {
-                    archiveArtifacts(artifacts: '**/target/*.jar', allowEmptyArchive: true)
-                }
+                stash(includes: '**/target/*.jar', name: "app")
             }
         }
         stage('Build Image') {
@@ -33,7 +27,8 @@ pipeline {
                 branch 'main'
             }
             steps {
-                sh "docker build -t main-app --build-arg APP_VERSION=${VERSION}.${BUILD_NUMBER} -f docker/main-app.dockerfile ."
+                unstash('app')
+                sh "docker build -t main-app --build-arg APP_VERSION=${APP_VERSION} -f docker/main-app.dockerfile ."
             }
         }
         stage('Push Image') {
@@ -41,9 +36,14 @@ pipeline {
                 branch 'main'
             }
             steps {
-                sh "docker tag main-app:latest main-app:${VERSION}.${BUILD_NUMBER}"
-                sh "docker push ${IMAGE_NAME}:${VERSION}.${BUILD_NUMBER}"
+                sh "docker tag main-app:latest main-app:${APP_VERSION}"
+                sh "docker push ${IMAGE_NAME}:${APP_VERSION}"
                 sh "docker push ${IMAGE_NAME}:latest"
+            }
+        }
+        post {
+            success {
+                archiveArtifacts(artifacts: '**/target/*.jar', allowEmptyArchive: true)
             }
         }
     }
