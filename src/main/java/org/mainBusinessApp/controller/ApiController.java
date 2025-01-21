@@ -1,5 +1,6 @@
 package org.mainBusinessApp.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.mainBusinessApp.model.Customer;
 import org.mainBusinessApp.model.Book;
 import org.mainBusinessApp.service.BookService;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 public class ApiController {
 
@@ -18,6 +20,7 @@ public class ApiController {
 
     @PostMapping("/books")
     public Book createBook(@RequestBody Book book) {
+        log.info("created new book");
         return bookService.saveBook(book);
     }
     @GetMapping("/books")
@@ -39,6 +42,7 @@ public class ApiController {
 
     @PostMapping("/customers")
     public Customer createCustomer(@RequestBody Customer customer) {
+        log.info("creating new customer");
         return customerService.saveCustomer(customer);
     }
     @GetMapping("/customers")
