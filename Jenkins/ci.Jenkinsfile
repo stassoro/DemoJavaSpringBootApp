@@ -12,6 +12,11 @@ pipeline {
     }
     stages {
         stage('Build App') {
+            agent {
+                docker {
+                    image 'maven:3.8.3-openjdk-17'
+                }
+            }
             steps {
                 withMaven(options: [artifactsPublisher(archiveFilesDisabled: true)]) {
                     sh 'mvn clean install'
