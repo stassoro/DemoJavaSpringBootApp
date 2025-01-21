@@ -78,6 +78,7 @@
 
 
     <build>
+        <finalName>DemoJavaSpringBootApp</finalName>
         <plugins>
             <!-- Spring Boot Maven Plugin for running the application -->
             <plugin>
@@ -102,15 +103,14 @@
 
     <profiles>
         <profile>
-            <id>ci</id>
+            <id>ci-with-app-version</id>
             <activation>
                 <property>
                     <name>env.APP_VERSION</name>
                 </property>
             </activation>
             <build>
-                <finalName>DemoJavaSpringBootApp</finalName>
-<!--                <finalName>DemoJavaSpringBootApp-${env.APP_VERSION}</finalName>-->
+                <finalName>DemoJavaSpringBootApp-${env.APP_VERSION}</finalName>
             </build>
         </profile>
     </profiles>
