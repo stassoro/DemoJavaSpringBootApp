@@ -6,7 +6,7 @@ pipeline {
     environment {
         REGISTRY_NAME = "acr name" // todo
         IMAGE_NAME = "main-app"
-        APP_VERSION = "${VERSION}-${BUILD_NUMBER}"
+        IMAGE_VERSION = "${VERSION}-${BUILD_NUMBER}"
     }
     stages {
         stage('Build App') {
@@ -28,7 +28,10 @@ pipeline {
             }
             steps {
                 unstash('app')
-                sh "docker build -t main-app --build-arg APP_VERSION=${APP_VERSION} -f docker/main-app.dockerfile ."
+                script {
+                    sh "ls -l"
+                }
+                sh "docker build -t $IMAGE_NAME --build-arg IMAGE_VERSION=${IMAGE_VERSION} -f docker/main-app.dockerfile ."
             }
         }
         stage('Push Image') {
@@ -36,8 +39,8 @@ pipeline {
                 branch 'main'
             }
             steps {
-                sh "docker tag main-app:latest main-app:${APP_VERSION}"
-                sh "docker push ${IMAGE_NAME}:${APP_VERSION}"
+                sh "docker tag ${IMAGE_NAME}:latest ${IMAGE_NAME}:${IMAGE_VERSION}"
+                sh "docker push ${IMAGE_NAME}:${IMAGE_VERSION}"
                 sh "docker push ${IMAGE_NAME}:latest"
             }
         }
