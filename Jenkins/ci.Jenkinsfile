@@ -1,5 +1,4 @@
 pipeline {
-
   agent {
     node {
       label 'docker'
@@ -8,12 +7,14 @@ pipeline {
   options {
     timestamps()
   }
+  parameters {
+    string(name: 'VERSION', defaultValue: '1.0.0', description: 'pass the version in the following format x.x.x')
+  }
   environment {
-    REGISTRY_NAME = "acr name"
-    VERSION = readMavenPom().getVersion()
+    REGISTRY_NAME = "acr name" // todo
   }
   stages {
-    stage('Build') {
+    stage('Build App') {
       agent {
         docker {
           image 'maven:3.8.3-openjdk-17'
@@ -30,15 +31,16 @@ pipeline {
         }
       }
     }
-    stage('Build and Publish Image') {
+    stage('Build and push Image') {
       when {
         branch 'main'
       }
       steps {
         sh """
-          docker build -t ${IMAGE} .
-          docker tag ${IMAGE} ${IMAGE}:${VERSION}
-          docker push ${IMAGE}:${VERSION}
+          docker build -t main-app --build-arg APP_VERSION=${VERSION}.${BUILD_NUMBER} -f docker/main-app.dockerfile .
+          docker tag main-app:latest main-app:${VERSION}.${BUILD_NUMBER}
+          docker push ${IMAGE}:${VERSION}.${BUILD_NUMBER}
+          docker push ${IMAGE}:latest
         """
       }
     }
